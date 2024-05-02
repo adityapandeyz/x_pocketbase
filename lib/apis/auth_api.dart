@@ -2,12 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:pocketbase/pocketbase.dart';
-
+import 'package:x_pocketbase/models/user_model.dart';
 import '../core/core.dart';
 
 final authAPIProvider = Provider((ref) {
-  final pb = ref.watch(pocketbaseProvider);
-  return AuthAPI(pb: pb);
+  return AuthAPI(
+    pb: ref.watch(pocketbaseProvider),
+  );
+});
+
+final currentUserIdProvider = FutureProvider((ref) {
+  final authAPI = ref.watch(authAPIProvider);
+  return authAPI.currentUserId();
 });
 
 abstract class IAuthAPI {
@@ -21,13 +27,15 @@ abstract class IAuthAPI {
     required String password,
   });
 
-  Future currentUserAuthToken();
+  Future currentUserToken();
 }
 
 class AuthAPI implements IAuthAPI {
   final PocketBase _pb;
   final storage = const FlutterSecureStorage();
-  AuthAPI({required PocketBase pb}) : _pb = pb;
+  AuthAPI({
+    required PocketBase pb,
+  }) : _pb = pb;
 
   @override
   FutureEither signup({
@@ -62,16 +70,28 @@ class AuthAPI implements IAuthAPI {
     required String password,
   }) async {
     try {
-      final record = await _pb.collection('users').authWithPassword(
+      final RecordAuth record = await _pb.collection('users').authWithPassword(
             email,
             password,
           );
 
-      final token = _pb.authStore.token;
+      final UserModel userModel = UserModel(
+        email: email,
+        id: record.record!.id,
+        token: record.token,
+        name: record.record!.data['name'] ?? '',
+        followers: [],
+        following: [],
+        profilePic: record.record!.data['profilePic'] ?? '',
+        bannerPic: record.record!.data['bannerPic'] ?? '',
+        bio: record.record!.data['bio'] ?? '',
+        hasXpremium: record.record!.data['hasXpremium'] ?? false,
+      );
 
-      await storage.write(key: 'userAuthToken', value: token);
+      await storage.write(key: 'user', value: userModel.toJson());
+      String? storageData = await storage.read(key: 'user');
 
-      print(record);
+      print(storageData);
 
       return right(record);
     } catch (e, stackTrace) {
@@ -85,14 +105,23 @@ class AuthAPI implements IAuthAPI {
   }
 
   @override
-  Future currentUserAuthToken() async {
+  Future currentUserToken() async {
     try {
-      String? userAuthToken = await storage.read(key: 'userAuthToken');
-
-      print(userAuthToken);
-      return userAuthToken;
-    } catch (e, stackTrace) {
+      String? storageData = await storage.read(key: 'user');
+      if (storageData == null) {
+        return null;
+      }
+      UserModel userModel = UserModel.fromJson(storageData);
+      return userModel.token;
+    } catch (e) {
       print(e);
     }
+  }
+
+  Future currentUserId() async {
+    String? storageData = await storage.read(key: 'user');
+    print(storageData);
+    UserModel userModel = UserModel.fromJson(storageData!);
+    return userModel.id;
   }
 }

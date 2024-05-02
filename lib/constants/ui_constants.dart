@@ -15,4 +15,10 @@ class UIConstants {
       centerTitle: true,
     );
   }
+
+  static List<Widget> bottomTapBarPages = [
+    const Text('Feed Screen'),
+    const Text('Search Screen'),
+    const Text('Notification Screen'),
+  ];
 }

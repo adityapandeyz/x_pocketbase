@@ -18,24 +18,23 @@ void main() {
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'X-PocketBase',
       theme: AppTheme.theme,
-      home: ref.watch(currentUserAuthTokenProvider).when(
-            data: (token) {
-              if (token == null) {
-                return const SignUpView();
-              }
-              return const HomeView();
-            },
-            error: (error, st) => ErrorPage(
-              error: error.toString(),
-            ),
-            loading: () => const LoadingPage(),
-          ),
+      home: (ref.watch(currentUserTokenProvider)).when(
+        data: (token) {
+          if (token == null) {
+            return const SignUpView();
+          }
+          return const HomeView();
+        },
+        error: (error, st) => ErrorPage(
+          error: error.toString(),
+        ),
+        loading: () => const LoadingPage(),
+      ),
     );
   }
 }
