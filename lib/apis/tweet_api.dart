@@ -11,6 +11,8 @@ final tweetAPIProvider = Provider((ref) {
 
 abstract class ITweetApi {
   FutureEither shareTweet(Tweet tweet);
+
+  Future<ResultList<RecordModel>> getTweets();
 }
 
 class TweetAPI implements ITweetApi {
@@ -31,5 +33,11 @@ class TweetAPI implements ITweetApi {
         Failure(e.toString(), st),
       );
     }
+  }
+
+  @override
+  Future<ResultList<RecordModel>> getTweets() async {
+    final records = await _pb.collection('tweets').getList();
+    return records;
   }
 }

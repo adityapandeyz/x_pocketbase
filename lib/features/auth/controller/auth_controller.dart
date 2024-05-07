@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pocketbase/pocketbase.dart';
 import 'package:x_pocketbase/apis/auth_api.dart';
 import 'package:x_pocketbase/core/utils.dart';
 import 'package:x_pocketbase/features/auth/view/login_view.dart';

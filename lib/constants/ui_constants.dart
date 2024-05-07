@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:x_pocketbase/features/tweet/widgets/tweet_list.dart';
 import 'package:x_pocketbase/theme/pallete.dart';
 
 import 'assets_constants.dart';
@@ -16,9 +17,9 @@ class UIConstants {
     );
   }
 
-  static List<Widget> bottomTapBarPages = [
-    const Text('Feed Screen'),
-    const Text('Search Screen'),
-    const Text('Notification Screen'),
+  static const List<Widget> bottomTapBarPages = [
+    TweetList(),
+    Text('Search Screen'),
+    Text('Notification Screen'),
   ];
 }

@@ -5,7 +5,6 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:http/http.dart' as http;
 import 'package:x_pocketbase/constants/constants.dart';
 import 'package:x_pocketbase/core/core.dart';
-import 'package:x_pocketbase/features/auth/controller/auth_controller.dart';
 
 final storageAPIProvider = Provider((ref) {
   return StorageAPI(
